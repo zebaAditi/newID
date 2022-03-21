@@ -3,7 +3,7 @@
 //var urlBase = "http://13.232.203.238:3000/api";
 
 //var urlBase = "http://192.168.43.164:3000/api";
-var urlBase = "http://65.0.186.134:3000/api";
+var urlBase = "http://52.66.213.255:3000/api";
 //var urlBase = "http://54.202.79.111:3000/api";
 //var urlBase = "http://13.234.186.40:3000/api";
 //var urlBase = "http://192.168.43.131:3000/api";
@@ -5499,6 +5499,45 @@ isArray:true
               url: urlBase + "/PermanentDriverRequests/searchMonthlyDrivers",
               method: "GET",
               isArray: true
+            },
+            /**
+             * @ngdoc method
+             * @name lbServices.PermanentDriverRequest#searchMonthlyDriversNFD
+             * @methodOf lbServices.PermanentDriverRequest
+             *
+             * @description
+             *
+             * <em>
+             * (The remote method definition does not provide any description.)
+             * </em>
+             *
+             * @param {Object=} parameters Request parameters.
+             *
+             *  - `from_date` – `{string=}` -
+             *
+             *  - `to_date` – `{string=}` -
+             *
+             *  - `operationCity` – `{string=}` -
+             *
+             * @param {function(Object,Object)=} successCb
+             *   Success callback with two arguments: `value`, `responseHeaders`.
+             *
+             * @param {function(Object)=} errorCb Error callback with one argument:
+             *   `httpResponse`.
+             *
+             * @returns {Object} An empty reference that will be
+             *   populated with the actual data once the response is returned
+             *   from the server.
+             *
+             * <em>
+             * (The remote method definition does not provide any description.
+             * This usually means the response is a `PermanentDriverRequest` object.)
+             * </em>
+             */
+             "searchMonthlyDriversNFD": {
+              url: urlBase + "/PermanentDriverRequests/searchMonthlyDriversNFD",
+              method: "GET",
+              isArray:true
             },
 
             /**

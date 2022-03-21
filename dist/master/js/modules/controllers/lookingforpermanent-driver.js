@@ -51,6 +51,25 @@ App.controller('permanentdriverCtrl', ['$scope', '$rootScope', '$filter', 'ngTab
             $scope.toggleMin();
             $scope.openToDate = false;
             $scope.openedStart = false;
+            $scope.openToDatefu = false;
+            $scope.openedStartfu = false;
+            $scope.openStartfu = function($event) {
+
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.openedStartfu = true;
+                $scope.openToDatefu = false;
+
+            };
+
+            $scope.openedToDatefu = function($event) {
+
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.openToDatefu = true;
+                $scope.openedStartfu = false;
+
+            };
             $scope.openStart = function($event) {
 
                 $event.preventDefault();
@@ -784,6 +803,403 @@ $rootScope.getMonthlyDriverRequest = function(searchData){
            
            } 
 };
+$rootScope.getMonthlyDriverRequestNFD = function(searchDatafu){
+    $scope.count = 0;
+    if (!angular.isUndefined(searchDatafu)) {
+        if((!angular.isUndefined(searchDatafu.frmDate)) || (!angular.isUndefined(searchDatafu.toDate))){
+                
+                
+                document.getElementById("frmDatefd").style.borderColor = "#dde6e9";
+                document.getElementById("frmDatefd1").innerHTML = '';
+ 
+                document.getElementById("toDatefd").style.borderColor = "#dde6e9";
+                document.getElementById("toDatefd1").innerHTML = '';
+ 
+                $scope.count--;
+            }else if((!angular.isUndefined(searchDatafu.frmDate)) && (angular.isUndefined(searchDatafu.toDate))){
+                document.getElementById("toDatefd").style.borderColor = "red";
+                 document.getElementById("toDatefd1").innerHTML = '*required';
+                 document.getElementById("frmDatefd").style.borderColor = "#dde6e9";
+                document.getElementById("frmDatefd1").innerHTML = '';
+ 
+                $scope.count++;
+            }else if((!angular.isUndefined(searchDatafu.toDate)) && (angular.isUndefined(searchDatafu.frmDate))){
+                document.getElementById("frmDatefd").style.borderColor = "red";
+                 document.getElementById("frmDatefd1").innerHTML = '*required';
+                 document.getElementById("toDatefd").style.borderColor = "#dde6e9";
+                document.getElementById("toDatefd1").innerHTML = '';
+ 
+                $scope.count++;
+            } 
+            }
+            else{      
+                 document.getElementById("frmDatefd").style.borderColor = "red";
+                 document.getElementById("frmDatefd1").innerHTML = '*required';
+ 
+                  document.getElementById("toDatefd").style.borderColor = "red";
+                 document.getElementById("toDatefd1").innerHTML = '*required';
+                
+                $scope.count++;
+            
+            
+        }
+ 
+        if($scope.count <= 0){
+             $localStorage.put('MDRcustomerSearchDataFD', searchDatafu);
+             $state.go('app.lookingForPermanentDriver');
+            
+            } 
+ };
+ $rootScope.getMDRDetailsNFD = function(searchDatafu) {
+    $rootScope.loader = 1;
+           $rootScope.fetchRequestData = [];
+           var allPDriver = [];
+            var from_date='nil';
+               var to_date='nil';
+    
+               if (!angular.isUndefined(searchDatafu.frmDate)){
+
+                      from_date=  moment(searchDatafu.frmDate).format('YYYY/MM/DD');
+                   }
+                   if (!angular.isUndefined(searchDatafu.toDate)){
+                      to_date= moment(searchDatafu.toDate).format('YYYY/MM/DD');
+                   }
+                   
+            
+            UserRoles.findOne({
+        filter: {
+               where: {
+                   conuserId: $rootScope.userId
+               }
+           }
+   },function(suc){
+      // console.log('suc: '+JSON.stringify(suc));
+       $rootScope.roleId = suc.roleId;
+       $rootScope.loader = 1;
+           if($rootScope.roleId === '1'){
+               if(angular.isUndefined($rootScope.operationCitySelect) || $rootScope.operationCitySelect === null){
+                   window.alert('Please Select Operation City.'); 
+                   $state.go('app.dashboard');
+                   $rootScope.loader = 0;
+              } else{
+               if($rootScope.operationCitySelect === 'All'){
+                   PermanentDriverRequest.searchMonthlyDriversNFD({
+                   from_date:from_date,
+                   to_date:to_date,
+                   operationCity:$rootScope.operationCitySelect
+
+               },
+
+
+               function(requestData) {
+                  console.log('request data' + JSON.stringify(requestData));
+                   for (var i = 0; i < requestData.length; i++) {
+                      var weekDaysId = [];
+                       var weekDays = [];
+
+
+
+                       var createdDate = moment(requestData[i].created_date).format('DD-MM-YYYY HH:mm:ss');
+                       if (angular.isDefined(requestData[i].weekly_off) && requestData[i].weekly_off !== null) {
+                           for (var j = 0; j < requestData[i].weekly_off.length; j++) {
+                               if (requestData[i].weekly_off[j] === '1') {
+                                   weekDaysId.push(1);
+                                   weekDays.push('Monday');
+                               }
+                               if (requestData[i].weekly_off[j] === '2') {
+                                   weekDaysId.push(2);
+                                   weekDays.push('Tuesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '3') {
+                                   weekDaysId.push(3);
+                                   weekDays.push('Wednesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '4') {
+                                   weekDaysId.push(4);
+                                   weekDays.push('Thursday');
+                               }
+                               if (requestData[i].weekly_off[j] === '5') {
+                                   weekDaysId.push(5);
+                                   weekDays.push('Friday');
+                               }
+                               if (requestData[i].weekly_off[j] === '6') {
+                                   weekDaysId.push(6);
+                                   weekDays.push('Saturday');
+                               }
+                               if (requestData[i].weekly_off[j] === '7') {
+                                   weekDaysId.push(7);
+                                   weekDays.push('Sunday');
+                               }
+
+                           }
+                       }
+                       var Days = '' + weekDays;
+                       var remark =requestData[i].remark
+
+                        
+ var n = remark.indexOf(".");
+ var remark1 = remark.slice(0, n);
+                       if(angular.isDefined(requestData[i])){
+                        allPDriver.push({
+                           id: requestData[i].id,
+                           customerId: requestData[i].customer_id,
+                           custName: requestData[i].first_name + ' ' + requestData[i].last_name +' ('+requestData[i].mobile_number+')',
+                           date: createdDate,
+                           firstName: requestData[i].first_name,
+                           lastName: requestData[i].last_name,
+                           email: requestData[i].email,
+                           mobile: requestData[i].mobile_number,
+                           status: requestData[i].status,
+                           remark: remark1,
+                           address: requestData[i].address + ',' + requestData[i].address_line_2,
+                           createdDate: requestData[i].created_date,
+                           createdBy: requestData[i].created_by,
+                           createdByName: requestData[i].created_by_name,
+                           carType: requestData[i].car_type,
+                           dutyHours: requestData[i].duty_hours,
+                           salBudget: requestData[i].salary_budget,
+                           natureOfDuty: requestData[i].nature_of_duty,
+                           weeklyOff: weekDaysId,
+                           weeklyOffDays: Days.replace('[', '').replace(']', '').replace('"', ''),
+                           nextFollowUpDate:requestData[i].next_follow_up_date
+
+                       });
+
+
+                   }
+               }
+                   $rootScope.fetchRequestData = allPDriver;
+                   $scope.data = allPDriver;
+                  console.log('All Driver' + JSON.stringify($scope.data));
+                   createTable();
+                   $rootScope.loader = 0;   
+                   
+                       $rootScope.loader = 0;
+               },
+               function(requestErr) {
+
+                   console.log('request error ' + JSON.stringify(requestErr));
+                   if (requestErr.status == 0) {
+                       window.alert('Oops! You are disconnected from server.');
+                       $state.go('page.login');
+                   }
+
+                   $rootScope.loader = 0;
+               });
+               }else{
+                 PermanentDriverRequest.searchMonthlyDriversNFD({
+                   from_date:from_date,
+                   to_date:to_date,
+                   operationCity:$rootScope.operationCitySelect
+
+               },
+               function(requestData) {
+                 console.log('request data' + JSON.stringify(requestData));
+                   for (var i = 0; i < requestData.length; i++) {
+                      var weekDaysId = [];
+                       var weekDays = [];
+
+
+
+                       var createdDate = moment(requestData[i].created_date).format('DD-MM-YYYY HH:mm:ss');
+                       if (angular.isDefined(requestData[i].weekly_off) && requestData[i].weekly_off !== null) {
+                           for (var j = 0; j < requestData[i].weekly_off.length; j++) {
+                               if (requestData[i].weekly_off[j] === '1') {
+                                   weekDaysId.push(1);
+                                   weekDays.push('Monday');
+                               }
+                               if (requestData[i].weekly_off[j] === '2') {
+                                   weekDaysId.push(2);
+                                   weekDays.push('Tuesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '3') {
+                                   weekDaysId.push(3);
+                                   weekDays.push('Wednesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '4') {
+                                   weekDaysId.push(4);
+                                   weekDays.push('Thursday');
+                               }
+                               if (requestData[i].weekly_off[j] === '5') {
+                                   weekDaysId.push(5);
+                                   weekDays.push('Friday');
+                               }
+                               if (requestData[i].weekly_off[j] === '6') {
+                                   weekDaysId.push(6);
+                                   weekDays.push('Saturday');
+                               }
+                               if (requestData[i].weekly_off[j] === '7') {
+                                   weekDaysId.push(7);
+                                   weekDays.push('Sunday');
+                               }
+
+                           }
+                       }
+                       var Days = '' + weekDays;
+                       var remark =requestData[i].remark
+
+                        
+ var n = remark.indexOf(".");
+ var remark1 = remark.slice(0, n);
+                       if(angular.isDefined(requestData[i])){
+                        allPDriver.push({
+                           id: requestData[i].id,
+                           customerId: requestData[i].customer_id,
+                           custName: requestData[i].first_name + ' ' + requestData[i].last_name+' ('+requestData[i].mobile_number+')',
+                           date: createdDate,
+                           firstName: requestData[i].first_name,
+                           lastName: requestData[i].last_name,
+                           email: requestData[i].email,
+                           mobile: requestData[i].mobile_number,
+                           status: requestData[i].status,
+                           remark: remark1,
+                           address: requestData[i].address + ',' + requestData[i].address_line_2,
+                           createdDate: requestData[i].created_date,
+                           createdBy: requestData[i].created_by,
+                           createdByName: requestData[i].created_by_name,
+                           carType: requestData[i].car_type,
+                           dutyHours: requestData[i].duty_hours,
+                           salBudget: requestData[i].salary_budget,
+                           natureOfDuty: requestData[i].nature_of_duty,
+                           weeklyOff: weekDaysId,
+                           weeklyOffDays: Days.replace('[', '').replace(']', '').replace('"', ''),
+                           nextFollowUpDate:requestData[i].next_follow_up_date
+
+                       });
+
+
+                   }
+               }
+                   $rootScope.fetchRequestData = allPDriver;
+                   $scope.data = allPDriver;
+                  console.log('All Driver' + JSON.stringify($scope.data));
+                   createTable();
+                   $rootScope.loader = 0;   
+                   
+                       $rootScope.loader = 0;
+               },
+               function(requestErr) {
+
+                  // console.log('request error ' + JSON.stringify(requestErr));
+                   if (requestErr.status == 0) {
+                       window.alert('Oops! You are disconnected from server.');
+                       $state.go('page.login');
+                   }
+
+                   $rootScope.loader = 0;
+               });  
+               }
+               
+              }
+          }else{
+            PermanentDriverRequest.searchMonthlyDriversNFD({
+                   from_date:from_date,
+                   to_date:to_date,
+                   operationCity:$rootScope.operationCity
+
+               },
+               function(requestData) {
+                    console.log('request data' + JSON.stringify(requestData));
+                   for (var i = 0; i < requestData.length; i++) {
+                      var weekDaysId = [];
+                       var weekDays = [];
+
+
+
+                       var createdDate = moment(requestData[i].created_date).format('DD-MM-YYYY HH:mm:ss');
+                       if (angular.isDefined(requestData[i].weekly_off) && requestData[i].weekly_off !== null) {
+                           for (var j = 0; j < requestData[i].weekly_off.length; j++) {
+                               if (requestData[i].weekly_off[j] === '1') {
+                                   weekDaysId.push(1);
+                                   weekDays.push('Monday');
+                               }
+                               if (requestData[i].weekly_off[j] === '2') {
+                                   weekDaysId.push(2);
+                                   weekDays.push('Tuesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '3') {
+                                   weekDaysId.push(3);
+                                   weekDays.push('Wednesday');
+                               }
+                               if (requestData[i].weekly_off[j] === '4') {
+                                   weekDaysId.push(4);
+                                   weekDays.push('Thursday');
+                               }
+                               if (requestData[i].weekly_off[j] === '5') {
+                                   weekDaysId.push(5);
+                                   weekDays.push('Friday');
+                               }
+                               if (requestData[i].weekly_off[j] === '6') {
+                                   weekDaysId.push(6);
+                                   weekDays.push('Saturday');
+                               }
+                               if (requestData[i].weekly_off[j] === '7') {
+                                   weekDaysId.push(7);
+                                   weekDays.push('Sunday');
+                               }
+
+                           }
+                       }
+                       var Days = '' + weekDays;
+                       var remark =requestData[i].remark
+
+                        
+ var n = remark.indexOf(".");
+ var remark1 = remark.slice(0, n);
+                       if(angular.isDefined(requestData[i])){
+                        allPDriver.push({
+                           id: requestData[i].id,
+                           customerId: requestData[i].customer_id,
+                           custName: requestData[i].first_name + ' ' + requestData[i].last_name+' ('+requestData[i].mobile_number+')',
+                           date: createdDate,
+                           firstName: requestData[i].first_name,
+                           lastName: requestData[i].last_name,
+                           email: requestData[i].email,
+                           mobile: requestData[i].mobile_number,
+                           status: requestData[i].status,
+                           remark: remark1,
+                           address: requestData[i].address + ',' + requestData[i].address_line_2,
+                           createdDate: requestData[i].created_date,
+                           createdBy: requestData[i].created_by,
+                           createdByName: requestData[i].created_by_name,
+                           carType: requestData[i].car_type,
+                           dutyHours: requestData[i].duty_hours,
+                           salBudget: requestData[i].salary_budget,
+                           natureOfDuty: requestData[i].nature_of_duty,
+                           weeklyOff: weekDaysId,
+                           weeklyOffDays: Days.replace('[', '').replace(']', '').replace('"', ''),
+                           nextFollowUpDate:requestData[i].next_follow_up_date
+
+                       });
+
+
+                   }
+               }
+                   $rootScope.fetchRequestData = allPDriver;
+                   $scope.data = allPDriver;
+                  console.log('All Driver' + JSON.stringify($scope.data));
+                   createTable();
+                   $rootScope.loader = 0;   
+                   
+                       $rootScope.loader = 0;
+               },
+               function(requestErr) {
+
+                  // console.log('request error ' + JSON.stringify(requestErr));
+                   if (requestErr.status == 0) {
+                       window.alert('Oops! You are disconnected from server.');
+                       $state.go('page.login');
+                   }
+
+                   $rootScope.loader = 0;
+               });
+       } 
+           
+       
+       },function(er){
+
+   });
+}
 
 $rootScope.getMDRDetails = function(searchData) {
      $rootScope.loader = 1;
@@ -1157,6 +1573,7 @@ $rootScope.getMDRDetails = function(searchData) {
            
             var storedCustomerId = $localStorage.get('MDRcustSearchId');
              var customerStoredData = $localStorage.get('MDRcustomerSearchData');
+             var customerStoredDataFD = $localStorage.get('MDRcustomerSearchDataFD');
            if(angular.isDefined(storedCustomerId)){
 
                     $rootScope.getCustomerMDRById(storedCustomerId);
@@ -1167,6 +1584,8 @@ $rootScope.getMDRDetails = function(searchData) {
                     $rootScope.getMDRDetails(customerStoredData);
 
 
+                }else if(angular.isDefined(customerStoredDataFD)){
+                    $rootScope.getMDRDetailsNFD(customerStoredDataFD);
                 }else{
             UserRoles.findOne({
          filter: {

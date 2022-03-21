@@ -36,6 +36,7 @@ table th {
                 </div>
 
 </div>
+
                  
 
             <div class="col-xs-12">
@@ -76,6 +77,40 @@ padding-bottom: 5px;" ng-click="getMonthlyDriverRequest(searchData)">
 
 
         </div>
+
+        <div class="col-xs-12"></div>
+        <div class="col-xs-12"><h3>Seach by next FollowUp Date</h3></div>
+        <div class="col-xs-12"></div>
+        <div class="col-xs-12">
+        
+
+            <div class="col-xs-3">
+                <label> From Date</label>
+                <input type="text" ng-model="searchDatafu.frmDate" id="frmDatefd" style="height: 24px;" datepicker-popup="dd-MM-yyyy" is-open="openedStartfu" min-date="minDate" datepicker-options="dateOptions" close-text="Close" class="input-hover" ng-click="openStartfu($event)" ng-blur="changeMin(frmDate)" />
+                <br>
+                <span id="frmDatefd1" style="color:red"></span>
+            </div>
+              
+
+            <div class="col-xs-3">
+                <label>To Date</label>
+                <input type="text" ng-model="searchDatafu.toDate" id="toDatefd" style="height: 24px;" datepicker-popup="dd-MM-yyyy" is-open="openToDatefu" min-date="minDate" datepicker-options="dateOptions" close-text="Close" class="input-hover" ng-click="openedToDatefu($event)" />
+                <br>
+                <span id="toDatefd1" style="color:red"></span>
+            </div>
+
+
+            
+
+
+            <div class="col-xs-3">
+                <button class="pull-right btn btn-labeled btn-primary" style="padding-top: 5px;
+padding-bottom: 5px;" ng-click="getMonthlyDriverRequestNFD(searchDatafu)">
+                    Search</button>
+            </div>
+
+
+    </div>
 
 </div>
    
