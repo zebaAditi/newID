@@ -3,7 +3,7 @@
 //var urlBase = "http://13.232.203.238:3000/api";
 
 //var urlBase = "http://192.168.43.164:3000/api";
-var urlBase = "http://52.66.213.255:3000/api";
+var urlBase = "http://65.0.186.134:3000/api";
 //var urlBase = "http://54.202.79.111:3000/api";
 //var urlBase = "http://13.234.186.40:3000/api";
 //var urlBase = "http://192.168.43.131:3000/api";
