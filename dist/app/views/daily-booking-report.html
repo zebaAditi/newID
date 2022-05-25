@@ -788,7 +788,7 @@ table th {
         </textarea>
         <br>
         <center>
-            <button style="text-align: center; margin-bottom: 20px; margin-top: 10px" class="mb-sm btn btn-danger" ng-click="submitCancellationReason(cancelationReason.id,comment.desc)">Submit
+            <button style="text-align: center; margin-bottom: 20px; margin-top: 10px" ng-disabled="isDisabledforCancel" class="mb-sm btn btn-danger" ng-click="submitCancellationReason(cancelationReason.id,comment.desc)">Submit
             </button>
     </div>
     <div class="modal-footer" style="text-align:center;border:-1px;background-color:gainsboro;">

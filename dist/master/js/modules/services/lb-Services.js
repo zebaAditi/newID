@@ -30319,6 +30319,8 @@ module.factory(
              *  - `cancellationId` – `{string}` -
              *
              *  - `cancellationReason` – `{string}` -
+             * 
+             *  - `userId` – `{string}` -
              *
              * @param {function(Object,Object)=} successCb
              *   Success callback with two arguments: `value`, `responseHeaders`.

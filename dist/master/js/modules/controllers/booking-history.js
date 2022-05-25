@@ -2780,6 +2780,26 @@ $scope.dutyArray = [{
         }, {
             'desc': 'Immediate'
         }];
+        $scope.bookingHistoryDetails = function(booking) {
+
+            // $rootScope.data = $rootScope.bookingDetailsData;
+ 
+            // $scope.historyDetails()
+             $rootScope.bookinghist = booking;
+             var modalInstance = $modal.open({
+                 templateUrl: '/bookingHistoryDetails.html',
+                 controller: bookingHistoryDetailsCtrl
+             });
+             //historyDetails(booking);
+         
+             var state = $('#modal-state');
+             modalInstance.result.then(function() {
+                 state.text('Modal dismissed with OK status');
+             }, function() {
+                 state.text('Modal dismissed with Cancel status');
+             });
+         };
+ 
         $scope.CancelBookingPopUp = function() {
 
             $modalInstance.dismiss('cancel');
@@ -5231,25 +5251,29 @@ mobileNumber: newDriverSMS.originalObject.mobileNumber,
                             bookingId: $rootScope.lineupBookingDetails.bookingId,
                              userId: $scope.uid
                         }, function(SuccessData) {
+                            if (SuccessData[0].driver_cancel_duty1 == 'Cancelled') {
+                                $.notify('Driver removed successfully ', {
+                                    status: 'success'
+                                });
+                               
+                                DriverAllocationReport.createAllocationHistory({
+                                    bookingId: parseInt($rootScope.lineupBookingDetails.bookingId),
+                                    driverId: $rootScope.lineupBookingDetails.oldDrvId,
+                                    userId: $scope.uid,
+                                    allocationStatus: 'Deallocation'
+                                }, function(success) {
+                                    console.log('created allocation successfully' + JSON.stringify(success));
+                                    driverDeallocateSMS2();
+                                    $modalInstance.dismiss('cancel');
+                                    reloadFunc();
+                                    $rootScope.getSearchHistory();
+                                    $rootScope.loader = 0;
+                                }, function(error) {
+                                    console.log('created allocation error' + JSON.stringify(error));
+                                });
+                            }
                             //console.log('driver deallocation success' + JSON.stringify(SuccessData));
-                            $.notify('Driver removed successfully ', {
-                                status: 'success'
-                            });
-                            driverDeallocateSMS2();
-                            DriverAllocationReport.createAllocationHistory({
-                                bookingId: parseInt($rootScope.lineupBookingDetails.bookingId),
-                                driverId: $rootScope.lineupBookingDetails.oldDrvId,
-                                userId: $scope.uid,
-                                allocationStatus: 'Deallocation'
-                            }, function(success) {
-                                console.log('created allocation successfully' + JSON.stringify(success));
-                                $modalInstance.dismiss('cancel');
-                                reloadFunc();
-                                $rootScope.getSearchHistory();
-                                $rootScope.loader = 0;
-                            }, function(error) {
-                                console.log('created allocation error' + JSON.stringify(error));
-                            });
+                           
                              
                         }, function(error) {
                             console.log('driver deallocation error' + JSON.stringify(error));

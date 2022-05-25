@@ -3727,7 +3727,7 @@ ConUsers.sendSMS({
         }];
 
         $scope.CancelBookingPopUp = function() {
-
+            $rootScope.isDisabledforCancel = false;
             console.log('cancelBooking popup');
             $modalInstance.dismiss('cancel');
 
@@ -3741,6 +3741,7 @@ ConUsers.sendSMS({
 
 
          $scope.submitCancellationReason = function(cancelationReason, comment) {
+            $rootScope.isDisabledforCancel = true;
             $rootScope.loader = 1;
             ConUsers.findById({
                     id: $rootScope.userId
@@ -5169,7 +5170,7 @@ ConUsers.sendSMS({
         }
 
         $scope.CancelBookingPopUp = function() {
-
+            $rootScope.isDisabledforCancel = false;
             console.log('cancelBooking popup');
             $modalInstance.dismiss('cancel');
 
@@ -5182,6 +5183,7 @@ ConUsers.sendSMS({
 
         $scope.submitCancellationReason = function(cancelationReason, comment) {
             $rootScope.loader = 1;
+            $rootScope.isDisabledforCancel = true;
             ConUsers.findById({
                     id: $rootScope.userId
                 },
@@ -5225,6 +5227,7 @@ ConUsers.sendSMS({
                             $modalInstance.dismiss('cancel');
                             reloadFunc();
                             $rootScope.getBookings();
+                            $scope.isDisabledforCancel = false;
                             $rootScope.loader = 0;
 
                         },
@@ -5236,6 +5239,7 @@ ConUsers.sendSMS({
                             }
                             $modalInstance.dismiss('cancel');
                             $rootScope.loader = 0;
+                            $scope.isDisabledforCancel = false;
 
                         });
                 },
@@ -6289,25 +6293,29 @@ ConUsers.sendSMS({
                             
                         }, function(SuccessData) {
                             //console.log('driver deallocation success' + JSON.stringify(SuccessData)); zebs
-                            $.notify('Driver removed successfully ', {
-                                status: 'success'
-                            });
-                           driverDeallocateSMS();
-                            DriverAllocationReport.createAllocationHistory({
-                                bookingId: parseInt($rootScope.lineupBookingDetails.bookingId),
-                                driverId: $rootScope.lineupBookingDetails.oldDrvId,
-                                userId: $rootScope.userId,
-                                allocationStatus: 'Deallocation'
-                            }, function(success) {
-                                console.log('created allocation successfully' + JSON.stringify(success));
-                                $modalInstance.dismiss('cancel');
-                                reloadFunc();
-                                $rootScope.getBookings();
-                                $rootScope.loader = 0;
-                            }, function(error) {
-                                console.log('created allocation error' + JSON.stringify(error));
-                            });
-
+                            if (SuccessData[0].driver_cancel_duty1 == 'Cancelled') {
+                                $.notify('Driver removed successfully ', {
+                                    status: 'success'
+                                });
+                               
+                                DriverAllocationReport.createAllocationHistory({
+                                    bookingId: parseInt($rootScope.lineupBookingDetails.bookingId),
+                                    driverId: $rootScope.lineupBookingDetails.oldDrvId,
+                                    userId: $rootScope.userId,
+                                    allocationStatus: 'Deallocation'
+                                }, function(success) {
+                                    driverDeallocateSMS();
+                                    console.log('created allocation successfully' + JSON.stringify(success));
+                                    $modalInstance.dismiss('cancel');
+                                    reloadFunc();
+                                    $rootScope.getBookings();
+                                    $rootScope.loader = 0;
+                                }, function(error) {
+                                    console.log('created allocation error' + JSON.stringify(error));
+                                });
+    
+                            }
+                           
                         }, function(error) {
                             console.log('driver deallocation error' + JSON.stringify(error));
                             if (error.status == 0) {
