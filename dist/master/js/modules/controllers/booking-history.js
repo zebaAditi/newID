@@ -2826,8 +2826,8 @@ $scope.dutyArray = [{
                     Bookings.cancelBookingForAdmin({
                             bookingId: $rootScope.cancelDetails1.bookingId,
                             cancellationId: cancelationReason.id,
-                            cancellationReason: $rootScope.bookingHistoryCancelationReasons.comment + ' ' + cancelName
-
+                            cancellationReason: $rootScope.bookingHistoryCancelationReasons.comment + ' ' + cancelName,
+                            userId: $rootScope.userId
                         },
 
                         function(response) {
